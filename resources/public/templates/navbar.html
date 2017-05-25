@@ -1,0 +1,44 @@
+<nav class="navbar navbar-default" ng-app="hsboxApp" ng-controller="Navbar">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        <img alt="Brand" src="img/cs-go.png" width=32>
+        cs:go stats alpha-0.0.1
+      </a>
+    </div>
+
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li ng-class="{active: $scope.active == 'search_round'}"><a href="#/search_round" ng-click="$scope.active = 'search_round'"><i class="fa fa-search"></i> Demo Info</a></li>
+        <li ng-class="{active: $scope.active == 'settings'}"><a href="#/settings" ng-click="$scope.active = 'settings'"><i class="fa fa-cogs"></i> Settings</a></li>
+        <li ng-if="showLogin">
+          <div ng-switch="isAuthorized" class="my-nav-button">
+            <a ng-switch-when="hsbox.handler/admin" href="/openid/logout">Log out</a>
+
+            <form ng-switch-when="null" action="/openid" method="POST">
+              <input name="identifier" value="http://steamcommunity.com/openid" type="hidden">
+              <button class="btn btn-sm btn-default no-bg" value="steam" type="submit"><i class="fa fa-steam"></i> Login with Steam</button>
+            </form>
+          </div>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li ng-if="isAuthorized && (indexerState.parsing || indexerState.demos_left)">
+          <a class="disabled">
+            <i class="fa fa-gear fa-lg faa-spin animated faa-slow" ng-if="indexerState.parsing"></i>
+            {{indexerState.demos_left ? indexerState.demos_left + ' demos left to analyze' : ' almost done' }}
+          </a>
+        </li>
+        <li ng-if="newVersionAvailable">
+          <h5><span class="label label-default">New version available!</span></h5>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<script>
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>

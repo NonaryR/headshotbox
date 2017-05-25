@@ -1,0 +1,6 @@
+FIND_PATH(JSON_SPIRIT_INCLUDE_DIR json_spirit.h)
+FIND_LIBRARY(JSON_SPIRIT_LIBRARY NAMES json_spirit)
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(JsonSpirit DEFAULT_MSG JSON_SPIRIT_LIBRARY JSON_SPIRIT_INCLUDE_DIR)
+mark_as_advanced(JSON_SPIRIT_INCLUDE_DIR JSON_SPIRIT_LIBRARY)

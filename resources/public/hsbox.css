@@ -1,0 +1,219 @@
+h1 {
+    margin: 20px;
+    text-align: center;
+}
+
+.avatar {
+    margin: 20px;
+    text-align: center;
+    border-radius: 25%;
+}
+
+.demo-avatar {
+    border-radius: 25%;
+}
+
+.list-avatar {
+    border-radius: 25%;
+    margin-right: 10px;
+}
+
+.name {
+    font-size: 200%;
+    text-align: center;
+}
+
+.navbar-default {
+    border-radius: 0px;
+}
+
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus,
+.navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus{
+  line-height:30px;
+}
+
+.navbar-brand, .navbar-nav>li>a{
+  text-shadow: none !important;
+  padding-top: 20px !important;
+  transition: all 0.3s ease;
+  line-height: 30px;
+}
+
+.my-nav-button {
+    display: block;
+    padding: 10px 15px;
+    padding-bottom: 15px;
+    padding-top: 20px !important;
+}
+
+#stats-tables, #tabs {
+    text-align: center;
+}
+#stats-tables .table, #weapon-stats {
+    width: auto;
+    display: inline-block;
+    text-align: right;
+    vertical-align: top;
+}
+
+.player-stats p{
+  font-weight: bold;
+  font-size: 16px;
+  padding: 5px;
+  text-align: center;
+  color: #333;
+}
+.player-stats span{
+  border-radius: 4px;
+  padding: 5px;
+  border: 1px solid rgba(94, 87, 87, 1);
+}
+
+#stats-tables, #tabs {
+    text-align: center;
+}
+#stats-tables .table, #weapon-stats {
+    width: auto;
+    display: inline-block;
+    text-align: right;
+    vertical-align: top;
+}
+
+#demos {
+    display: table;
+    width: 900px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+div.demoDiv {
+    width: 884px;
+    display: inline-block;
+}
+
+a {
+    cursor: pointer;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.player-list li {
+    font-size: 120%;
+    padding: 4px;
+    list-style-type: none;
+}
+
+.red { color: red; }
+.green { color: green; }
+.blue { color: blue; }
+.lightblue { color: blue; }
+.won_background { background-color: #F1FFEF; cursor: pointer; }
+.lost_background { background-color: #FFF1EF; cursor: pointer; }
+.tied_background { background-color: #F0F0F0; cursor: pointer; }
+
+.score {
+    display: inline-block;
+    width: 2em;
+}
+
+.notes {
+    display: inline-block;
+    text-align: left;
+    height: 6em !important;
+    padding: 5px;
+}
+
+.well {
+    box-shadow: none;
+    word-wrap: break-word;
+}
+
+#notes-container .row {
+    width: 15em;
+}
+
+.form-control{
+}
+
+.file-path{
+    text-align: center;
+    width: 890px;
+    padding: 7px;
+    border-radius: 4px;
+}
+
+.steam-api-link{
+  color:#428bca !important;
+}
+#theme-select {
+  margin: 0 auto;
+  text-align: center;
+}
+#theme-select p{
+  color: #333;
+}
+.search-box input{
+  width: 87%;
+  float: left;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px
+}
+.search-box button{
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 0px;
+}
+.help-button{
+  margin-right: 29px;
+  border-radius: 69%;
+  background: rgba(0, 0, 0, 0);
+  color: #333;
+  padding: 6px 10px;
+  text-shadow: none;
+}
+#demo-dir-help button,
+#steam-api-help button{
+  margin-right: 0px;
+  padding: 0px 4px;
+}
+#searchround{float:right;}
+
+.teammates-box {
+    box-shadow: none !important;
+}
+
+.teammate {
+    background: inherit;
+    border: none;
+}
+
+.remove-teammate {
+    border-radius: 69%;
+}
+
+.no-bg {
+    background-image: none;
+}
+
+.steam-btn {
+  text-align: center;
+  margin-right: 0px;
+  padding: 0px 0px;
+}
+
+.banned-text {
+}
+
+.inline {
+    display: inline-block;
+}
+
+.nopadding {
+   padding-right: 0 !important;
+   padding-left: 0 !important;
+}
+
+.tilted {
+    transform: rotate(15deg);
+}

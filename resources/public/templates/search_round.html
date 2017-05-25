@@ -1,0 +1,113 @@
+<p/>
+<div ng-app="hsboxApp" ng-controller="RoundSearch">
+  <form ng-submit="search()">
+    <div class="row">
+      <div class="col-md-2 search-box">
+          <button type="submit" id="searchround" class="btn btn-default btn-lg"><i class="fa fa-id-card"></i></button>
+      </div>
+      <div class="col-md-2">
+          <button type="button" class="btn btn-default btn-sm help-button btn-lg" ng-click="roundHelpIsCollapsed = !roundHelpIsCollapsed">
+          <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+
+    <br/>
+    <div class="row">
+      <div collapse="roundHelpIsCollapsed">
+    <div class="well well-lg text-left">
+          Rounds can be filtered on:
+          <ul>
+            <li>map name (eg. <em>de_nuke</em>)</li>
+            <li>side (eg. <em>t</em> or <em>ct</em>)</li>
+            <li>clutch situation won (eg. <em>1v2</em> would find all rounds that at some point got in a 1v2 situation and the player won)</li>
+            <li>ninja defuse - when the CT player finished defusing the bomb there were at least as many alive Ts as CTs</li>
+            <li>number of kills (eg. <em>3k</em> - all rounds with at least 3 kills). The time frame of the kills can be specified by adding <em>&lt;Xs</em> at the end where X is the number of seconds (eg. <em>4k<3s</em> - at least 4 kills within 3 seconds)</li>
+            <li>number of kills with a particular weapon (eg. <em>2xak47</em> - at least 2 ak47 kills). See 'Weapon Stats' tab for valid weapon names. The following flags can be added:
+              <ul>
+                <li>hs - kill with a headshot</li>
+                <li>bang - kill through a wall</li>
+                <li>collateral - killed at least two in the same tick with the same weapon</li>
+                <li>jump - kills which happened [0.1-0.5] seconds after the attacker jumped</li>
+                <li>air - kills where the attacker was in the air (jumping or falling off a ledge)</li>
+                <li>smoke - the line attacker-victim intersects a smoke</li>
+                <li>noscope - kill without scoping with either awp, ssg08, scar20, g3sg1</li>
+                <li>quickscope - kill when scoped for less than 100 ms with either awp, ssg08, scar20, g3sg1</li>
+              </ul>
+          Eg. <em>3xdeaglehs</em> - at least 3 deagle headshot kills. The name of the weapon or kill number can be ommited. Eg. <em>jumpbang</em> - jumping kills through a wall</li>
+          </ul>
+          Example: to search for rounds on map de_nuke ct side with at least 3 ak47 kills (with at least one of those 3 being a wallbang headshot) and at least 1 deagle headshot
+          <br/>
+          <em>de_nuke ct deaglehs 3xak47 ak47hsbang</em>
+        </div>
+      </div>
+    </div>
+  </form>
+  <p/>
+  <div class="row" ng-if="rounds">
+    <h5 class="text-center">{{ rounds.length == 100 ? "100+ rounds found" : rounds.length + " rounds found" }}</h5>
+  </div>
+  <div class="row" ng-if="rounds.length == 0 && !searchInProgress">
+    <h5 class="text-center">No rounds found</h5>
+  </div>
+  <div>
+    <div ng-if="searchInProgress" class="text-center">
+      <i class="fa fa-spinner fa-pulse"></i> Searching...
+    </div>
+
+    <table class="table table-hover" ng-if="rounds">
+      <thead>
+        <tr>
+          <th class="text-left"><a ng-click="setOrder('timestamp')">Date</a></th>
+          <th class="text-left">Map</th>
+          <th class="text-center">Side</th>
+          <th class="text-center"><a ng-click="setOrder('round')">Round</a></th>
+          <th class="text-center" ng-if="!steamid">Player</th>
+          <th class="text-center">Kills</th>
+          <th class="text-center">Won?</th>
+          <th class="text-center">Watch</th>
+          <th class="text-center" ng-if="steamid">Demo</th>
+        </tr>
+      </thead>
+      <tbody ng-repeat="round in rounds | orderBy:orderRounds">
+        <tr>
+          <td class="text-left">{{round.date}}</td>
+          <td class="text-left">{{round.map}}</td>
+          <td class="text-center" ng-class="{blue: round.side == 'CT', red: round.side == 'T'}">{{round.side}}</td>
+          <td class="text-center">{{round.round}}</td>
+          <td class="text-left" ng-if="!steamid">
+            <a href="http://steamcommunity.com/profiles/{{round.steamid}}" ng-if="players[round.steamid].avatar"><img ng-src="{{players[round.steamid].avatar}}" class="list-avatar"/></a>
+            <a href="#/player/{{round.steamid}}">{{players[round.steamid].personaname ? players[round.steamid].personaname : players[round.steamid].name}}</a>
+          </td>
+          <td class="text-left">
+            <div ng-repeat="kill in round.kills">
+              {{kill.kills + "x"}}
+              <img ng-src="img/weapons/icon-{{kill.weapon}}{{kill.noscope ? '_noscope' : ''}}_grey.png" height="20" ng-class="{tilted: kill.air}" title="{{kill_description(kill)}}"/>
+              <img ng-if="kill.smoke" src="img/weapons/smoke_grey.png" height="20" title="{{kill_description(kill)}}"/>
+              <img ng-if="kill.penetrated" src="img/weapons/icon-penetrate_grey.png" height="20" title="{{kill_description(kill)}}"/>
+              <img ng-if="kill.headshot" src="img/weapons/icon-headshot_grey.png" height="20" title="{{kill_description(kill)}}"/>
+            </div>
+          </td>
+          <td class="text-center" ng-class="{green: round.won, red: !round.won}">{{round.won_str}}</td>
+          <td class="text-center">
+            <button type="button" class="btn btn-success btn-xs" ng-click="downloadDemo(round.demoid)" ng-if="$root.config.demo_download_enabled">
+              <i class="fa fa-download"></i>
+            </button>
+            <button type="button" class="btn btn-success btn-xs" ng-click="watchDemo(round.demoid, round.steamid, round.round)">
+              <i class="fa fa-play-circle"></i>
+            </button>
+          </td>
+          <td ng-click="makeVisible(round.demoid, round.round)" class="clickable text-center" ng-if="steamid">
+            <i class="pull-right glyphicon"
+               ng-class="{'glyphicon-chevron-down': isVisible(round.demoid, round.round), 'glyphicon-chevron-right': !isVisible(round.demoid, round.round)}"/>
+          </td>
+        </tr>
+        <tr ng-if="isVisible(round.demoid, round.round) && steamid">
+          <td colspan="9">
+            <div ng-include src="'templates/demo.html'"></div>
+          </td>
+        </tr>
+      <tbody>
+    </table>
+  </div>
+</div>

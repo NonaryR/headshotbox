@@ -1,0 +1,92 @@
+<table id="demos" class="table">
+  <thead>
+    <tr>
+      <th class="text-left"><a ng-click="orderDemos = (orderDemos  == '-timestamp' ? 'timestamp' : '-timestamp')">Date</a></th>
+      <th class="text-center">Type</th>
+      <th class="text-center">Rank</th>
+      <th class="text-left">Map</th>
+      <th class="text-center">Score</th>
+      <th class="text-center"><a ng-click="orderDemos = '-kills'">K</a></th>
+      <th class="text-center">A</th>
+      <th class="text-center">D</th>
+      <th class="text-center"><a ng-click="orderDemos = '-kdd'"><abbr title="Kill-Death Difference">KDD</abbr></a></th>
+      <th class="text-center"><a ng-click="orderDemos = '-hs_percent'"><abbr title="Headshot Percent">HS %</abbr></a></th>
+      <th class="text-center">Watch</th>
+    </tr>
+  </thead>
+  <tbody ng-repeat="demo in demos | orderBy:orderDemos">
+    <tr ng-class="{won_background: demo.outcome == 'won', lost_background: demo.outcome == 'lost', tied_background: demo.outcome == 'tied'}" data-ng-click="makeVisible(demo.demoid)">
+      <td class="text-left nopadding">
+        <div class="row">
+          <div class="col-sm-1">
+            <img class="demo-avatar" src="img/vac.png" ng-if="demo.banned_players" width="24" title="{{demo.banned_players}} banned players"/>
+          </div>
+          <div class="col-sm-10">
+            {{demo.date}}
+          </div>
+        </div>
+      <td class="text-center nopadding"><img ng-src="img/{{demo.type}}.png" width="50"/></td>
+      <td class="text-center nopadding">
+        <img ng-if="demo.mm_rank_update.rank_old" ng-src="img/ranks/{{demo.mm_rank_update.rank_old}}.png" width="50"/>
+        <span ng-if="demo.mm_rank_update.rank_old != demo.mm_rank_update.rank_new">
+          <i class="fa fa-long-arrow-right"></i>
+          <img ng-if="demo.mm_rank_update.rank_new" ng-src="img/ranks/{{demo.mm_rank_update.rank_new}}.png" width="50"/>
+        </span>
+        {{demo.metrics.elo ? demo.metrics.elo : ""}}
+      </td>
+      <td class="text-left nopadding">{{demo.map}}</td>
+      <td class="text-center nopadding">
+        <span class="score text-right">
+          <i class="fa fa-flag-o" title="Surrendered" ng-if="demo.surrendered && demo.outcome == 'lost'"></i>
+          {{demo.score[0]}}
+        </span>
+        -
+        <span class="score text-left">{{demo.score[1]}}
+          <i class="fa fa-flag-o" title="Surrendered" ng-if="demo.surrendered && demo.outcome == 'won'"></i>
+        </span>
+      </td>
+      <td class="text-center nopadding">{{demo.kills}}</td>
+      <td class="text-center nopadding">{{demo.assists}}</td>
+      <td class="text-center nopadding">{{demo.deaths}}</td>
+      <td class="text-center nopadding" ng-class="{green: demo.kdd >= 0, red: demo.kdd < 0}">{{demo.kdd | signed}}</td>
+      <td class="text-center nopadding">{{demo.hs_percent | number:2}}</td>
+      <td class="text-right nopadding" ng-click="$event.stopPropagation()">
+        <button type="button" class="btn btn-success btn-xs" ng-click="downloadDemo(demo.demoid)" ng-if="$root.config.demo_download_enabled">
+          <i class="fa fa-download"></i>
+        </button>
+
+        <button type="button" class="btn btn-success btn-xs" ng-click="watchDemo(demo.demoid, steamid, nil, 0)">
+          <i class="fa fa-play-circle"></i>
+        </button>
+
+        <div class="btn-group dropdown">
+          <button type="button" class="btn btn-primary btn-xs dropdown-toggle">
+            More <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu text-left" role="menu">
+            <li class="dropdown-toggle teammates-box" ng-click="watchDemo(demo.demoid, steamid, nil, nil, 'high')"><a>Highlights</a></li>
+            <li class="dropdown-toggle teammates-box" ng-click="watchDemo(demo.demoid, steamid, nil, nil, 'high_enemy')"><a>Highlights Enemy POV</a></li>
+            <li class="dropdown-toggle teammates-box" ng-click="watchDemo(demo.demoid, steamid, nil, nil, 'low')"><a>Lowlights</a></li>
+            <li class="dropdown-toggle teammates-box" ng-click="watchDemo(demo.demoid, steamid, nil, nil, 'pov')"><a>POV</a></li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+    <tr ng-if="isVisible(demo.demoid)">
+      <td colspan="11">
+        <div ng-include src="'templates/demo.html'"></div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div class="text-center" ng-if="$root.config.demos_per_page">
+  <pagination direction-links="false"
+              boundary-links="true"
+              boundary-link-numbers="true"
+              total-items="demoPages.demoCount"
+              ng-model="demoPages.currentPage"
+              items-per-page="$root.config.demos_per_page"
+              max-size="10"
+              rotate="true"
+              ng-change="getDemos()"></pagination>
+</div>

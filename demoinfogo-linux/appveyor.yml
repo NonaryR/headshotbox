@@ -1,0 +1,21 @@
+install:
+   - git clone https://gitlab.com/bugdone/demoinfogo_windows_build.git
+   - move demoinfogo_windows_build\demoinfogo.vcxproj demoinfogo.vcxproj
+   - move demoinfogo_windows_build\make_cc_files.bat make_cc_files.bat
+   - move demoinfogo_windows_build\protoc.exe protoc.exe
+   - make_cc_files.bat
+
+configuration: Release
+
+artifacts:
+  - path: Release\demoinfogo.exe
+
+deploy:
+  description: 'cool beans'
+  provider: GitHub
+  auth_token:
+    secure: d2zAm2/HZt67l+hCiNb8HLuvlknOSZnvUyyGHZ2VLwxPyU0x5OYdmSJyF7lk+mDB
+  draft: true
+  on:
+    branch: master
+    appveyor_repo_tag: true

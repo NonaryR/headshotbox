@@ -1,0 +1,230 @@
+<div class="row">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <div class="name">
+      <a href="http://steamcommunity.com/profiles/{{steamid}}">
+        <img class="avatar" ng-src="{{player.avatarfull ? player.avatarfull : 'img/avatar.jpg'}}" width="64"/>
+      </a>
+      {{player.personaname ? player.personaname : player.name}}
+      <img ng-if="player.last_rank" ng-src="img/ranks/{{player.last_rank}}.png" width="100"/>
+    </div>
+
+    <div id="stats-tables" class="center-block">
+      <table class="table player-stats">
+        <tr>
+          <th>Win %</th>
+          <td>{{stats.won / (stats.won + stats.lost) * 100 | number:2}}</td>
+        </tr>
+        <tr>
+          <th>Won</th>
+          <td>{{stats.won}}</td>
+        </tr>
+        <tr>
+          <th>Tied</th>
+          <td>{{stats.tied}}</td>
+        </tr>
+        <tr>
+          <th>Lost</th>
+          <td>{{stats.lost}}</td>
+        </tr>
+        <tr>
+          <th>Total</th>
+          <td>{{stats.won + stats.tied + stats.lost}}</td>
+        </tr>
+      </table>
+      <table class="table player-stats">
+        <tr>
+          <th><abbr title="Kill/Death Ratio">KDR</abbr></th>
+          <td ng-class="{green: stats.kills >= stats.deaths, red: stats.kills < stats.deaths}">{{stats.kills / stats.deaths | number:2}}</td>
+        </tr>
+        <tr>
+          <th><abbr title="Headshot Percent">HS %</abbr></th>
+          <td>{{stats.hs_percent | number:2}}</td>
+        </tr>
+        <tr>
+          <th>Rating <a href="http://www.hltv.org/?pageid=242" title="HLTV Rating" style="color:inherit">(?)</a></th>
+          <td>{{stats.rating  | number:2}}</td>
+        </tr>
+        <tr>
+          <th>RWS <a href="https://play.esea.net/index.php?s=support&d=faq&id=212" title="average Round Win Shares" style="color:inherit">(?)</a></th>
+          <td>{{stats.rws / stats.rounds_with_damage_info | number:2}}</td>
+        </tr>
+        <tr>
+          <th><abbr title="1v1 rounds won / attempted ({{stats['1v1_won']}}/{{stats['1v1_attempted']}})">Clutch %</abbr>
+            <abbr title="Only 2v1 rounds that end up in 1v1 are considered (same as hltv.org)">(?)</abbr>
+          </th>
+          <td>{{stats['1v1_won'] / stats['1v1_attempted'] * 100 | number:2}}</td>
+        </tr>
+      </table>
+      <table class="table player-stats">
+        <tr>
+          <th><abbr title="Kills Per Round">KPR</abbr></th>
+          <td>{{stats.kills / stats.rounds | number:2}}</td>
+        </tr>
+        <tr>
+          <th><abbr title="Assists Per Round">APR</abbr></th>
+          <td>{{stats.assists / stats.rounds | number:2}}</td>
+        </tr>
+        <tr>
+          <th><abbr title="Deaths Per Round">DPR</abbr></th>
+          <td>{{stats.deaths / stats.rounds | number:2}}</td>
+        </tr>
+        <tr>
+          <th><abbr title="Entry Kills Per Round">EKPR</abbr></th>
+          <td>{{stats.entry_kills / stats.rounds_t | number:2}}</td>
+        </tr>
+        <tr>
+          <th><abbr title="Average Damage Per Round (takes into account only games after the 30.06.2015 patch)">ADR</abbr></th>
+          <td>{{stats.damage / stats.rounds_with_damage_info | number:2}}</td>
+        </tr>
+      </table>
+      <table class="table player-stats">
+        <tr>
+          <th><abbr title="Rounds with 3 kills">3K</abbr></th>
+          <td>{{stats.rounds_with_kills[3]}}</td>
+        </tr>
+        <tr>
+          <th><abbr title="Rounds with 4 kills">4K</abbr></th>
+          <td>{{stats.rounds_with_kills[4]}}</td>
+        </tr>
+        <tr>
+          <th><abbr title="Rounds with 5 kills">5K</abbr></th>
+          <td>{{stats.rounds_with_kills[5]}}</td>
+        </tr>
+      </table>
+      <table class="table player-stats">
+        <tr>
+          <th><abbr title="First Duel as T Win % ({{stats.entry_kills}}/{{stats.entry_kills_attempted}})">Entry Kill Win %</abbr></th>
+          <td>{{100 * stats.entry_kills / stats.entry_kills_attempted | number:2}}</td>
+        </tr>
+        <tr>
+          <th><abbr title="First Duel as T or CT Win % ({{stats.open_kills}}/{{stats.open_kills_attempted}})">First Duel Win %</abbr></th>
+          <td>{{100 * stats.open_kills / stats.open_kills_attempted | number:2}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="inline">
+      <!-- Folder -->
+      <div class="form-group btn-group dropdown inline">
+        <button type="button" class="btn btn-default dropdown-toggle no-bg">
+          Folder: {{filterDemos.folder ? filterDemos.folder : "ALL"}} <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li ng-repeat="folder in folders"><a ng-click="setFolder(folder)">{{folder ? folder : "ALL"}}</a></li>
+        </ul>
+      </div>
+      <!-- Demo type -->
+      <div class="form-group btn-group dropdown inline">
+        <button type="button" class="btn btn-default dropdown-toggle no-bg">
+          Demo type {{filterDemos.demoType}} <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li><a ng-click="setDemoType(null)">All</a></li>
+          <li><a ng-click="setDemoType('valve')"><img ng-src="img/valve.png" width="50"/></a></li>
+          <li><a ng-click="setDemoType('esea')"><img ng-src="img/esea.png" width="50"/></a></li>
+          <li><a ng-click="setDemoType('faceit')"><img ng-src="img/faceit.png" width="50"/></a></li>
+          <li><a ng-click="setDemoType('cevo')"><img ng-src="img/cevo.png" width="50"/></a></li>
+        </ul>
+      </div>
+      <!-- Map -->
+      <div class="form-group btn-group dropdown inline">
+        <button type="button" class="btn btn-default dropdown-toggle no-bg">
+          Map {{filterDemos.mapName}} <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li><a ng-click="setMap(null)">All</a></li>
+          <li ng-repeat="map in playerMaps"><a ng-click="setMap(map)">{{map}}</a></li>
+        </ul>
+      </div>
+      <!-- Rounds -->
+      <div class="form-group btn-group dropdown inline">
+        <button type="button" class="btn btn-default dropdown-toggle no-bg">
+          {{filterDemos.rounds}} Rounds <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li ng-repeat="roundType in ['All', 'T', 'CT', 'Pistol']"><a ng-click="setRounds(roundType)">{{roundType}}</a></li>
+        </ul>
+      </div>
+      <!-- Start date -->
+      <div class="form-group input-group">
+        <span class="input-group-addon">Start</span>
+        <input type="text"
+               class="form-control"
+               is-open="datepickerStatus[0]"
+               datepicker-popup="dd.MM.yyyy"
+               starting-day="1"
+               ng-model="startDate"
+               close-text="Close"/>
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default no-bg" ng-click="openDatepicker($event, 0)"><i class="glyphicon glyphicon-calendar"></i></button>
+        </span>
+      </div>
+      <!-- End date -->
+      <div class="form-group input-group">
+        <span class="input-group-addon">End</span>
+        <input type="text"
+               class="form-control"
+               is-open="datepickerStatus[1]"
+               datepicker-popup="dd.MM.yyyy"
+               starting-day="1"
+               ng-model="endDate"
+               close-text="Close"/>
+        <span class="input-group-btn">
+          <button type="button" class="btn btn-default no-bg" ng-click="openDatepicker($event, 1)"><i class="glyphicon glyphicon-calendar"></i></button>
+        </span>
+      </div>
+      <!-- Teammate -->
+      <div class="form-group dropdown">
+        <button type="button" class="btn btn-default dropdown-toggle no-bg" ng-disabled="filterTeammates.length == 4">
+          <i class="fa fa-plus green"></i> Teammate
+        </button>
+        <ul class="dropdown-menu text-left teammates-box" role="menu">
+          <li ng-repeat="teammate in playerTeammates" ng-click="addTeammate(teammate)">
+            <a>
+              <img ng-src="{{steamAccounts[teammate.steamid]['avatar'] ? steamAccounts[teammate.steamid].avatar : 'img/avatar.jpg'}}" width="24"/>
+              {{steamaccounts[teammate.steamid] ? steamaccounts[teammate.steamid].personaname : teammate.name}} ({{teammate.demos}} demos)</li>
+            </a>
+        </ul>
+      </div>
+      <ul class="list-group teammates-box">
+        <li ng-repeat="teammate in filterTeammates" class="row list-group-item teammate">
+          <div class="col-sm-10 text-left">
+            <img ng-src="{{steamAccounts[teammate.steamid]['avatar'] ? steamAccounts[teammate.steamid].avatar : 'img/avatar.jpg'}}" width="24"/>
+            {{steamaccounts[teammate.steamid] ? steamaccounts[teammate.steamid].personaname : teammate.name}}
+          </div>
+          <div class="col-sm-2 text-right">
+            <a class="remove-teammate" ng-click="removeTeammate(teammate)">
+              <i class="fa fa-minus red"></i>
+            </a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-12 col-lg-8">
+    <div id="tabs" class="center-block">
+      <tabset>
+        <tab ng-repeat="tab in tabArray" select="loadTab(tab)" style="display:inline-block;float:none;">
+          <tab-heading>
+            <i class="fa fa-{{tab.icon}}"></i>
+            {{tab.heading}}
+          </tab-heading>
+          <div ng-hide="tab.status != 'loaded'">
+            <ng-include src="'templates/' + tab.content + '.html'"></ng-include>
+          </div>
+          <div ng-hide="tab.status != 'loading'">
+            <div ng-include src="'templates/loading.html'"></div>
+          </div>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+  <div class="col-md-2"></div>
+</div>

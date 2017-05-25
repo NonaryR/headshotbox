@@ -1,0 +1,129 @@
+<div id="tabs" class="center-block">
+  <tabset>
+    <tab ng-repeat="round in demo.rounds" style="display:inline-block;float:none;">
+      <tab-heading>
+        <i class="fa fa-exchange" ng-if="round.teams_switched"></i>
+        <span ng-class="{lightblue: round.winner == 3, red: round.winner == 2}">{{$index + 1}}</span>
+        <img ng-src="img/defuser.png" ng-if="round['bomb_defused']" height="20"/>
+        <img ng-src="img/c4.png" ng-if="round['bomb_exploded']" height="20"/>
+        <i class="fa fa-warning" ng-if="round.deaths.length > 10"></i>
+      </tab-heading>
+
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-2">
+          <table class="table force-white">
+            <tr>
+              <td>Tick</td>
+              <td>{{round.tick}} <i class="fa fa-arrow-right"></i> {{round.tick_end}}</td>
+            </tr>
+            <tr>
+              <td>Duration</td>
+              <td>{{(round.tick_end - round.tick) * demo.tickrate | number:0}} seconds</td>
+            </tr>
+            <tr>
+              <td>Kills</td>
+              <td>{{round.deaths.length}}</td>
+            </tr>
+            <tr>
+              <td>Winner</td>
+              <td><span ng-class="{lightblue: round.winner == 3, red: round.winner == 2}">{{round.winner == 3 ? "CT" : "T"}}</span></td>
+            </tr>
+            <tr>
+              <td>Watch
+              </td>
+              <td class="text-center">
+                <button type="button" class="btn btn-success btn-xs" ng-click="downloadDemo(demo.demoid)" ng-if="$root.config.demo_download_enabled">
+                  <i class="fa fa-download"></i>
+                </button>
+                <button type="button" class="btn btn-success btn-xs" ng-click="watchDemo(demo.demoid, steamid, $index + 1)">
+                  <i class="fa fa-play-circle"></i>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
+          <div class="row">
+            <div class="col-md-6">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="text-center">CT</th>
+                    <th class="text-center">Damage</th>
+                    <th class="text-center" ng-if="round.winner == 3">RWS</th>
+                  </tr>
+                </thead>
+                <tr ng-repeat="(player, team) in round.players" ng-if="team == 3">
+                  <td>
+                    <span ng-class="{lightblue: round.players[player] == 3, red: round.players[player] == 2}">{{playerName(demo.players[player])}}</span>
+                    <img ng-src="img/defuser.png" ng-if="round['bomb_defused'] == player" height="20"/>
+                  </td>
+                  <td>
+                    <span>{{round.damage[player]}}</span>
+                  </td>
+                  <td ng-if="round.winner == 3">
+                    <span>{{round.rws[player]}}</span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="col-md-6">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="text-center">T</th>
+                    <th class="text-center">Damage</th>
+                    <th class="text-center" ng-if="round.winner == 2">RWS</th>
+                  </tr>
+                </thead>
+                <tr ng-repeat="(player, team) in round.players" ng-if="team == 2">
+                  <td>
+                    <span ng-class="{lightblue: round.players[player] == 3, red: round.players[player] == 2}">{{playerName(demo.players[player])}}</span>
+                    <img ng-src="img/c4.png" ng-if="round['bomb_exploded'] == player" height="20"/>
+                  </td>
+                  <td>
+                    <span>{{round.damage[player]}}</span>
+                  </td>
+                  <td ng-if="round.winner == 2">
+                    <span>{{round.rws[player]}}</span>
+                  </td>
+                </tr>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2"></div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <table class="table force-white">
+            <thead>
+              <tr>
+                <th class="text-center">Tick</th>
+                <th class="text-center">Kill</th>
+              </tr>
+            </thead>
+            <tr ng-repeat="death in round.deaths">
+              <td>{{death.tick}}</td>
+              <td>
+                <span ng-class="{lightblue: round.players[death.attacker] == 3, red: round.players[death.attacker] == 2}">{{playerName(demo.players[death.attacker])}}</span>
+                <span ng-if="death.assister != '0'" ng-class="{blue: round.players[death.assister] == 3, red: round.players[death.assister] == 2}"> + {{playerName(demo.players[death.assister])}}</span>
+                <img ng-src="img/weapons/icon-{{death.weapon_name}}_grey.png" ng-if="death.weapon_name" height="20"/>
+                <div ng-if="!death.weapon_name">{{death.weapon}}</div>
+                <img ng-if="death.penetrated" src="img/weapons/icon-penetrate_grey.png" height="20"/>
+                <img ng-if="death.headshot" src="img/weapons/icon-headshot_grey.png" height="20"/>
+                <span ng-class="{lightblue: round.players[death.victim] == 3, red: round.players[death.victim] == 2}">{{playerName(demo.players[death.victim])}}</span>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="col-md-8"></div>
+      </div>
+    </tab>
+  </tabset>
+</div>
